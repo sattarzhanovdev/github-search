@@ -1,11 +1,12 @@
 import React from 'react'
+import { AiOutlineClose } from 'react-icons/ai'
 import { BiBookBookmark, BiBuildings, BiStar } from 'react-icons/bi'
 import { FiUsers } from 'react-icons/fi'
 import { SlLocationPin } from 'react-icons/sl'
 import { BsFillCaretDownFill } from 'react-icons/bs'
 import { API } from '../../API'
 import cls from './Main.module.scss'
-import { typesList } from '../Utils'
+import { langsList, typesList } from '../Utils'
 
 const Main = ({username, setUsername}) => {
   const [ base, setBase ] = React.useState(null)
@@ -16,7 +17,6 @@ const Main = ({username, setUsername}) => {
   const [ followings, setFollowings ] = React.useState(null)
   const [ active, setActive ] = React.useState(1)
   const [ type, setType ] = React.useState('repos')
-  const [ visibility, setVisibility ] = React.useState('')
   const [ search, setSearch ] = React.useState('')
 
   React.useEffect(() => {
@@ -37,12 +37,46 @@ const Main = ({username, setUsername}) => {
 
     API.getFollowings(username)
       .then(res => setFollowings(res.data))
-
+      
   }, [username])
-
-  const searchedBase = base?.filter(item => {
+    
+  let searchedBase = repos?.filter(item => {
     return item.name.toLowerCase().includes(search.toLowerCase())
   })
+
+  const sortByTypes = (visibility) => {
+    console.log(visibility);
+
+    setRepos(repos?.filter(item => {
+      if(item.visibility === visibility){
+        return item
+      }
+
+      if(visibility === 'All'){
+        return item
+      }
+
+      if(visibility === 'Private'){
+        if(item.private === true){
+          return item
+        }else{
+          return ''
+        }
+      }
+    }))
+  }
+
+
+  const sortByLanguages = (language) => {
+    console.log(language);
+    setRepos(repos?.filter(item => {
+      if(item.language === language){
+        return item
+      }
+    }))
+    console.log(repos);
+  }
+
 
   return (
     <div className={cls.user}>
@@ -103,33 +137,117 @@ const Main = ({username, setUsername}) => {
               onChange={e => setSearch(e.target.value)}
             />
             <div className={cls.sorting}>
-              <div className={cls.visibility}>
+              <div 
+                className={cls.visibility}
+                onClick={() => {
+                  setActive(3)
+                }}
+              >
                 <li>
                   Type <BsFillCaretDownFill />
                 </li>
               </div>
-              <div className={cls.drop}>
-                {
-                  typesList.map(item => (
-                    <li
-                      key={item.id}
-                      onClick={() => setVisibility(item.title)}
-                    >
-                      {item.title}
-                    </li>
-                  ))
-                }
-              </div>
-              <div className={cls.visibility}>
+              <div 
+                className={cls.visibility}
+                onClick={() => setActive(4)}
+              >
                 <li>
                   Language <BsFillCaretDownFill />
                 </li>
               </div>
-              <div className={cls.visibility}>
+              <div 
+                className={cls.visibility}
+                onClick={() => setActive(5)}
+              >
                 <li>
                   Sort <BsFillCaretDownFill />
                 </li>
               </div>
+
+              {
+                active === 3 ?
+                <div 
+                  className={cls.drop}
+                  id={cls.type}
+                >
+                  <div className={cls.title}>
+                    <h4>Select type</h4>
+                    <li
+                      onClick={() => setActive('')}
+                    >
+                      <AiOutlineClose />
+                    </li>
+                  </div>
+                  {
+                    typesList.map(item => (
+                      <li
+                        key={item.id}
+                        onClick={() => {
+                          sortByTypes(item.title)
+                          setActive('')
+                        }}
+                      >
+                        {item.title}
+                      </li>
+                    ))
+                  }
+                </div> : 
+                active === 4 ?
+                <div 
+                  className={cls.drop}
+                  id={cls.lang}
+                >
+                  <div className={cls.title}>
+                    <h4>Select language</h4>
+                    <li
+                      onClick={() => setActive('')}
+                    >
+                      <AiOutlineClose />
+                    </li>
+                  </div>
+                  {
+                    langsList.map(item => (
+                      <li
+                        key={item.id}
+                        onClick={() => {
+                          sortByLanguages(item.title)
+                          setActive('')
+                        }}
+                      >
+                        {item.title}
+                      </li>
+                    ))
+                  }
+                </div> :
+                active === 5 ?
+                <div 
+                  className={cls.drop}
+                  id={cls.lang}
+                >
+                  <div className={cls.title}>
+                    <h4>Select order</h4>
+                    <li
+                      onClick={() => setActive('')}
+                    >
+                      <AiOutlineClose />
+                    </li>
+                  </div>
+                  {
+                    langsList.map(item => (
+                      <li
+                        key={item.id}
+                        onClick={() => {
+                          sortByLanguages(item.language)
+                          setActive('')
+                        }}
+                      >
+                        {item.title}
+                      </li>
+                    ))
+                  }
+                </div> :
+                null
+              }
             </div>
           </div>
         </div>
@@ -264,7 +382,7 @@ const Main = ({username, setUsername}) => {
                   </div>
                 </div>
               )) :
-              searchedBase?.map((item, i) => (
+              repos?.map((item, i) => (
                 <div 
                   key={i}
                   className={cls.repos} 

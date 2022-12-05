@@ -11,10 +11,11 @@ const Header = () => {
   const [ users, setUsers ] = React.useState(null)
   const [ active, setActive ] = React.useState('')
   const [ username, setUsername ] = React.useState('sattarzhanovdev')
+  const [ name, setName ] = React.useState('')
 
 
   React.useEffect(() => {
-    API.searchUsers(username)
+    API.searchUsers(name ? name : username)
       .then(res => setBase(res.data.items))
 
     API.getUsers()

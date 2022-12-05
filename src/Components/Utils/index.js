@@ -18,3 +18,19 @@ export const typesList = [
   {id: 7, title: 'Mirrors'},
   {id: 8, title: 'Templates'},
 ]
+
+export const langsList = [
+  {id: 1, title: 'All'},
+  {id: 2, title: 'JavaScript'},
+  {id: 3, title: 'CSS'},
+  {id: 4, title: 'SCSS'},
+  {id: 5, title: 'TypeScript'},
+  {id: 6, title: 'Python'},
+  {id: 7, title: 'HTML'},
+  {id: 8, title: 'C++'},
+]
+
+export const sortList = [
+  {id: 1, title: 'Name'},
+  {id: 2, title: 'Stars'},
+]
